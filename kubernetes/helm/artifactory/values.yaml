@@ -63,6 +63,7 @@ artifactory:
     annotations: {}
   externalPort: 8081
   internalPort: 8081
+  uid: 1030
   persistence:
     mountPath: "/var/opt/jfrog/artifactory"
     enabled: true

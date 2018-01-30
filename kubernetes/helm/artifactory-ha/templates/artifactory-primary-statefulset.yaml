@@ -31,13 +31,15 @@ spec:
     {{- end }}
       initContainers:
     {{- if .Values.artifactory.persistence.enabled }}
-      - name: "remove-lost-found"
+      - name: "prepare-storage"
         image: "{{ .Values.initContainerImage }}"
         imagePullPolicy: {{ .Values.artifactory.image.pullPolicy }}
         command:
         - 'sh'
         - '-c'
-        - 'rm -rfv {{ .Values.artifactory.persistence.mountPath }}/lost+found'
+        - >
+          rm -rfv {{ .Values.artifactory.persistence.mountPath }}/lost+found;
+          chown -v {{ .Values.artifactory.uid }}:{{ .Values.artifactory.uid }} {{ .Values.artifactory.persistence.mountPath }};
         volumeMounts:
         - mountPath: {{ .Values.artifactory.persistence.mountPath | quote }}
           name: volume
@@ -122,7 +124,7 @@ spec:
         - name: volume
           mountPath: "{{ .Values.artifactory.persistence.mountPath }}"
         - name: artifactory-inactiveservercleaner
-          mountPath: "{{ .Values.artifactory.persistence.mountPath }}/etc/plugins/inactiveServerCleaner.groovy"
+          mountPath: "/tmp/plugins/inactiveServerCleaner.groovy"
           subPath: inactiveServerCleaner.groovy
       {{- if eq .Values.artifactory.persistence.type "nfs" }}
         - name: artifactory-ha-data
@@ -131,12 +133,12 @@ spec:
           mountPath: "{{ .Values.artifactory.persistence.nfs.backupDir }}"
       {{- else }}
         - name: binarystore-xml
-          mountPath: "{{ .Values.artifactory.persistence.mountPath }}/etc/binarystore.xml"
+          mountPath: "/artifactory_extra_conf/binarystore.xml"
           subPath: binarystore.xml
       {{- end }}
       {{- if .Values.artifactory.license.secret }}
         - name: artifactory-license
-          mountPath: "{{ .Values.artifactory.persistence.mountPath }}/etc/artifactory.cluster.license"
+          mountPath: "/artifactory_extra_conf/artifactory.cluster.license"
           subPath: {{ .Values.artifactory.license.dataKey }}
       {{- end }}
         resources:

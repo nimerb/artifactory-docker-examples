@@ -22,13 +22,15 @@ spec:
       - name: {{ .Values.imagePullSecrets }}
     {{- end }}
       initContainers:
-      - name: "remove-lost-found"
+      - name: "prepare-storage"
         image: "{{ .Values.initContainerImage }}"
         imagePullPolicy: {{ .Values.artifactory.image.pullPolicy }}
         command:
         - 'sh'
         - '-c'
-        - 'rm -rfv {{ .Values.artifactory.persistence.mountPath }}/lost+found'
+        - >
+          rm -rfv {{ .Values.artifactory.persistence.mountPath }}/lost+found;
+          chown -v {{ .Values.artifactory.uid }}:{{ .Values.artifactory.uid }} {{ .Values.artifactory.persistence.mountPath }};
         volumeMounts:
         - mountPath: {{ .Values.artifactory.persistence.mountPath | quote }}
           name: artifactory-volume
