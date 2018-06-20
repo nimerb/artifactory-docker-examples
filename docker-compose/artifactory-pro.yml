@@ -11,7 +11,7 @@ services:
      - POSTGRES_USER=artifactory
      - POSTGRES_PASSWORD=${POSTGRES_PSWRD}
     volumes:
-     - /data/postgresql:/var/lib/postgresql/data
+     - /data/postgresql:/var/lib/postgresql/data:z
     restart: always
     ulimits:
       nproc: 65535
