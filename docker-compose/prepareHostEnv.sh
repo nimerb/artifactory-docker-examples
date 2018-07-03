@@ -145,14 +145,6 @@ createDirectories () {
 
 copyFiles () {
     echo "Copying needed files to directories"
-
-    echo "Artifactory configuration files"
-    if [ "$TYPE" = "pro" ] || [ "$TYPE" = "oss" ]; then
-        cp -fr ${SCRIPT_DIR}/../files/access ${ROOT_DATA_DIR}/artifactory/
-    else
-        cp -fr ${SCRIPT_DIR}/../files/access ${ROOT_DATA_DIR}/artifactory/node1/
-        cp -fr ${SCRIPT_DIR}/../files/access ${ROOT_DATA_DIR}/artifactory/node2/
-    fi
         # Copy the binarystore.xml which has configuration for no-shared storage
         if [ "$TYPE" = "ha" ]; then
             cp -f ${SCRIPT_DIR}/../files/binarystore.xml ${ROOT_DATA_DIR}/artifactory/node1/etc
